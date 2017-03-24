@@ -13,3 +13,9 @@ This is an attempt to replace my current Jenkins setup - this is an experiment a
  * API for status-monitoring
  * Create artifacts for tags
  * Uninstalling the apps before running UI-tests
+
+
+Credits:
+
+ - Icon: https://openclipart.org/detail/219802/mikey-rat-copywrong
+ 
