@@ -10,6 +10,7 @@ This is an attempt to replace my current Jenkins setup - this is an experiment a
  * Act as Github integration: https://developer.github.com/early-access/integrations
  * Abort build by dereferencing the commit (e.g. via force-push)
  * Backfilling (build more flavors and commits between pushes when idle e.g. sleeping)
+ * Intelligent stage ordering (e.g. if there is a lint-failure - the lint stage is next when backfilling or user push)
  * API for status-monitoring
  * Create artifacts for tags
  * Uninstalling the apps before running UI-tests
