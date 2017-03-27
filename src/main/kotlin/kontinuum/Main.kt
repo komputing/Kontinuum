@@ -9,9 +9,11 @@ fun main(args: Array<String>) {
         exit(1)
     }
 
+    listOf(workspaceDir, tmpDir, outDir).forEach { it.mkdirs() }
+
     println("using config: " + ConfigProvider.config)
     startWebServer()
-
+    processWorkPackages()
 
 }
 

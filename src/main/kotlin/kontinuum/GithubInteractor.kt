@@ -16,14 +16,15 @@ import java.security.PrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
 
+val config = ConfigProvider.config
+
 fun obtain_private_key(private_key_file: File): PrivateKey {
     val privateKeyBytes = private_key_file.readBytes()
     val encodedKeySpec = PKCS8EncodedKeySpec(privateKeyBytes)
     return KeyFactory.getInstance("RSA").generatePrivate(encodedKeySpec)
 }
 
-fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) {
-    val config = ConfigProvider.config
+fun getToken(): String? {
 
     val claimsSet = JWTClaimsSet.Builder()
             .issuer(config.github.integration)
@@ -46,24 +47,27 @@ fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) 
     val result = tokenResponseAdapter.fromJson(execute.body().source())
 
     if (execute.code() == 201) {
-
-        val token = result.token
-        println("got token:" + token)
-
-        val commitStatusJson = commitStatusAdapter.toJson(status)
-
-        val commitStatus = executeCommand(
-                command = "repos/$full_repo/statuses/$commit_id",
-                token = token,
-                body = RequestBody.create(MediaType.parse("json"), commitStatusJson)
-        )
-
-        println("res: " + commitStatus)
-
+        return result.token
     } else {
         println("problem getting token" + execute.code())
+        return null
     }
+}
 
+fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) {
+
+    val token = getToken()
+    println("got token:" + token)
+
+    val commitStatusJson = commitStatusAdapter.toJson(status)
+
+    val commitStatus = executeCommand(
+            command = "repos/$full_repo/statuses/$commit_id",
+            token = token!!,
+            body = RequestBody.create(MediaType.parse("json"), commitStatusJson)
+    )
+
+    println("res: " + commitStatus)
 
 }
 

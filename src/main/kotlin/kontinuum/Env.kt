@@ -10,6 +10,10 @@ import java.io.File
 
 val configFile = File("kontinuum_config.json")
 
+val workspaceDir = File("workspace")
+val tmpDir = File("tmp")
+val outDir = File("out")
+
 val okhttp = OkHttpClient.Builder().build()
 val moshi = Moshi.Builder().build()
 

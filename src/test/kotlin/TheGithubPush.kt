@@ -15,5 +15,6 @@ class TheGithubPush {
         assertThat(fromJson.commits.size).isEqualTo(1)
 
         assertThat(fromJson.commits.first().author.name).isEqualTo("ligi")
+
     }
 }

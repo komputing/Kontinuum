@@ -19,9 +19,8 @@ fun startWebServer() {
                     val payload = call.request.content[String::class]
                     processWebHook(it,payload)
                 }
-
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
             }
         }
-    }.start(wait = true)
+    }.start(wait = false)
 }
