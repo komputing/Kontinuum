@@ -1,6 +1,7 @@
 package kontinuum
 
 import com.squareup.moshi.Moshi
+import io.ipfs.kotlin.IPFS
 import kontinuum.model.config.Config
 import kontinuum.model.github.GithubCommitStatus
 import kontinuum.model.github.GithubPushEvent
@@ -16,6 +17,8 @@ val outDir = File("out")
 
 val okhttp = OkHttpClient.Builder().build()
 val moshi = Moshi.Builder().build()
+
+val ipfs = IPFS()
 
 val tokenResponseAdapter = moshi.adapter(TokenResponse::class.java)
 val commitStatusAdapter = moshi.adapter(GithubCommitStatus::class.java)

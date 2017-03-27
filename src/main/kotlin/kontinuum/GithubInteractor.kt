@@ -45,6 +45,7 @@ fun getToken(): String? {
     val execute = executeCommand(command = "installations/${config.github.installation}/access_tokens", token = jwt, body = RequestBody.create(null, ByteArray(0)))
 
     val result = tokenResponseAdapter.fromJson(execute.body().source())
+    execute.body().close()
 
     if (execute.code() == 201) {
         return result.token

@@ -1,7 +1,12 @@
 package kontinuum
 
+import kontinuum.model.WorkPackage
+import kontinuum.model.github.GithubCommitState
+import kontinuum.model.github.GithubCommitState.*
+import kontinuum.model.github.GithubCommitStatus
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import java.io.File
 
 
 fun processWorkPackages() {
@@ -14,8 +19,9 @@ fun processWorkPackages() {
             println("processing work package: $currentWorkPackage")
 
             val toPath = java.io.File(workspaceDir, currentWorkPackage.project)
-            val outPath = java.io.File(outDir, currentWorkPackage.project + "/" + currentWorkPackage.commitHash)
-            outPath.mkdirs()
+
+
+            setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", pending, "checkout in progress", "checkout")
 
             val git = if (!toPath.exists()) {
                 Git.cloneRepository()
@@ -30,22 +36,62 @@ fun processWorkPackages() {
             }
 
             git.checkout().setName(currentWorkPackage.commitHash).call()
+
             println("processing commit: " + git.log().setMaxCount(1).call().first().fullMessage)
 
-            executeAndPrint("./gradlew", "clean", "assembleRelease", workPath = toPath, outPath = outPath)
+            setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", success, "checkout done", "checkout")
 
-            /*
-            val apkPath = File(tagPath, "apkpath")
-            apkPath.mkdir()
-            projectFile.walk().filter { it.name.endsWith(".apk") }.forEach { it.copyTo(File(apkPath, it.name), true) }
-            */
+            doIn("spoon", currentWorkPackage, { outPath ->
+                val spoonResult = executeAndPrint("./gradlew", "clean", "spoon", "-PsingleFlavor", workPath = toPath, outPath = outPath)
+                println("finished spoon with " + spoonResult)
+                toPath.walk().filter { it.name == "spoon" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
 
-            println("finished building")
+                if (spoonResult == 0) success else error
+            })
 
-        } else {
-            println("no work")
+            doIn("assemble", currentWorkPackage, { outPath ->
+
+                val result = executeAndPrint("./gradlew", "assembleRelease", workPath = toPath, outPath = outPath)
+
+                if (result == 0) {
+                    toPath.walk().filter { it.name.endsWith(".apk") }.forEach { it.copyTo(File(outPath, it.name), true) }
+                    success
+                } else {
+                    error
+                }
+            })
+
         }
         Thread.sleep(1000)
     }
 
+}
+
+fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
+    println("entering $name")
+    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress",name)
+
+    val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + name)
+    outPath.mkdirs()
+
+    val result = block.invoke(outPath)
+
+    println("finished $name with $result")
+    setStatus(workPackage, addIPFS(outPath), result, "result", name)
+
+}
+
+private fun addIPFS(outPath: File): String {
+    ipfs.add.directory(outPath).forEach {
+        println("ipfs file: " + it)
+    }
+
+    val find = ipfs.add.directory(outPath).find { it.Name == "file" }
+    val ipfsURL = "https://gateway.ipfs.io/ipfs/" + find?.Hash
+    return ipfsURL
+}
+
+private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
+    val githubCommitStatus = GithubCommitStatus(state, target_url = url, description = description, context = "kontinuum/$context")
+    setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus)
 }

@@ -2,25 +2,30 @@ package kontinuum
 
 import java.io.File
 
-fun executeAndPrint(vararg commandAndParams: String, outPath: File, workPath: File) {
+fun executeAndPrint(vararg commandAndParams: String, outPath: File, workPath: File) : Int {
 
     try {
 
         println("executing ${commandAndParams.joinToString(" ")}")
-        val directory = ProcessBuilder(commandAndParams.asList()).directory(workPath)
-        directory.environment().put("ANDROID_HOME", ConfigProvider.config.android_sdk_root)
 
-        val p = directory.start()
+        val process = ProcessBuilder(commandAndParams.asList()).directory(workPath)
 
-        StreamToFileWriter(p.inputStream, File(outPath, "out.txt")).start()
-        StreamToFileWriter(p.errorStream, File(outPath, "err.txt")).start()
+        process.environment().put("ANDROID_HOME", ConfigProvider.config.android_sdk_root)
 
-        while (p.isAlive) {
+        val startedProcess = process.start()
+
+        StreamToFileWriter(startedProcess.inputStream, File(outPath, "out.txt")).start()
+        StreamToFileWriter(startedProcess.errorStream, File(outPath, "err.txt")).start()
+
+        while (startedProcess.isAlive) {
             Thread.sleep(100)
         }
 
-        p.errorStream.close()
+        startedProcess.inputStream.close()
+        startedProcess.errorStream.close()
+        return startedProcess.exitValue()
     } catch(e: Exception) {
         e.printStackTrace()
+        return 1
     }
 }
