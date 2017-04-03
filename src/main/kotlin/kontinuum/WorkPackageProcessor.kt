@@ -26,6 +26,7 @@ fun processWorkPackages() {
             val git = if (!toPath.exists()) {
                 Git.cloneRepository()
                         .setURI("https://x-access-token:" + getToken() + "@github.com/" + currentWorkPackage.project + ".git")
+                        .setCloneSubmodules(true)
                         .setDirectory(toPath)
                         .call()
             } else {
@@ -36,6 +37,7 @@ fun processWorkPackages() {
             }
 
             git.checkout().setName(currentWorkPackage.commitHash).call()
+            git.submoduleUpdate().call()
 
             println("processing commit: " + git.log().setMaxCount(1).call().first().fullMessage)
 
