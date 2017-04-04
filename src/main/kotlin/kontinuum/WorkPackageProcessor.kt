@@ -7,9 +7,8 @@ import kontinuum.model.github.GithubCommitStatus
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.submodule.SubmoduleWalk
 import java.io.File
-
-
 
 
 fun processWorkPackages() {
@@ -25,11 +24,12 @@ fun processWorkPackages() {
 
             setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", pending, "checkout in progress", "checkout")
 
-            val git_res=try {
+            val git_res = try {
                 val git = if (!toPath.exists()) {
                     Git.cloneRepository()
                             .setURI("https://x-access-token:" + getToken() + "@github.com/" + currentWorkPackage.project + ".git")
                             .setCloneSubmodules(true)
+
                             .setDirectory(toPath)
                             .call()
                 } else {
@@ -40,12 +40,20 @@ fun processWorkPackages() {
                 }
 
                 git.checkout().setName(currentWorkPackage.commitHash).call()
+
+                val walk = SubmoduleWalk.forIndex(git.repository)
+                while (walk.next()) {
+                    val submodule = walk.repository
+                    Git.wrap(submodule).fetch().call()
+                    submodule.close()
+                }
+
                 git.submoduleUpdate().call()
                 setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", success, "checkout done", "checkout")
 
                 println("processing commit: " + git.log().setMaxCount(1).call().first().fullMessage)
                 true
-            } catch (e:JGitInternalException) {
+            } catch (e: JGitInternalException) {
                 val errorMessage = "error while checkout: " + e.message
 
                 val hash = ipfs.add.string(e.getStacktraceAsStting()).Hash
@@ -106,7 +114,7 @@ fun processWorkPackages() {
 
 fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
     println("entering $name")
-    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress",name)
+    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress", name)
 
     val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + name)
     outPath.mkdirs()
