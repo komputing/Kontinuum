@@ -51,6 +51,30 @@ fun processWorkPackages() {
                 if (spoonResult == 0) success else error
             })
 
+            doIn("lint", currentWorkPackage, { outPath ->
+
+                val result = executeAndPrint("./gradlew", "lint","-PsingleFlavor", workPath = toPath, outPath = outPath)
+
+                if (result == 0) {
+                    toPath.walk().filter { it.name.startsWith("lint-results") }.forEach { it.copyTo(File(outPath, it.name), true) }
+                    success
+                } else {
+                    error
+                }
+            })
+
+            doIn("test", currentWorkPackage, { outPath ->
+
+                val result = executeAndPrint("./gradlew", "test","-PsingleFlavor", workPath = toPath, outPath = outPath)
+
+                if (result == 0) {
+                    toPath.walk().filter { it.name == "tests" }.forEach { it.copyTo(File(outPath, it.name), true) }
+                    success
+                } else {
+                    error
+                }
+            })
+
             doIn("assemble", currentWorkPackage, { outPath ->
 
                 val result = executeAndPrint("./gradlew", "assembleRelease", workPath = toPath, outPath = outPath)
