@@ -10,6 +10,8 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import java.io.File
 
 
+
+
 fun processWorkPackages() {
     while (true) {
 
@@ -45,7 +47,9 @@ fun processWorkPackages() {
                 true
             } catch (e:JGitInternalException) {
                 val errorMessage = "error while checkout: " + e.message
-                setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", error, errorMessage, "checkout")
+
+                val hash = ipfs.add.string(e.getStacktraceAsStting()).Hash
+                setStatus(currentWorkPackage, hash.hashAsIPFSURL(), error, errorMessage, "checkout")
                 false
             }
 
@@ -120,8 +124,7 @@ private fun addIPFS(outPath: File): String {
     }
 
     val find = ipfs.add.directory(outPath).find { it.Name == "file" }
-    val ipfsURL = "https://gateway.ipfs.io/ipfs/" + find?.Hash
-    return ipfsURL
+    return find?.Hash.hashAsIPFSURL()
 }
 
 private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
