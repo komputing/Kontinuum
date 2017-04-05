@@ -127,12 +127,14 @@ fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCo
 }
 
 private fun addIPFS(outPath: File): String {
-    ipfs.add.directory(outPath).forEach {
-        println("ipfs file: " + it)
-    }
 
-    val find = ipfs.add.directory(outPath).find { it.Name == "file" }
-    return find?.Hash.hashAsIPFSURL()
+    val joinToString = ipfs.add.directory(outPath).map {
+        val name = it.Name.replace("file/","")
+        val url = it.Hash.hashAsIPFSURL()
+        "<a href='$url'>$name</a>"
+    }.joinToString("<br/>")
+
+    return ipfs.add.string(joinToString).Hash.hashAsIPFSURL()
 }
 
 private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
