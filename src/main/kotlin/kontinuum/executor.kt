@@ -14,8 +14,10 @@ fun executeAndPrint(vararg commandAndParams: String, outPath: File, workPath: Fi
 
         val startedProcess = process.start()
 
-        StreamToFileWriter(startedProcess.inputStream, File(outPath, "out.txt")).start()
-        StreamToFileWriter(startedProcess.errorStream, File(outPath, "err.txt")).start()
+        val outFile = File(outPath, "out.txt")
+        StreamToFileWriter(startedProcess.inputStream, outFile).start()
+        val errorFile = File(outPath, "err.txt")
+        StreamToFileWriter(startedProcess.errorStream, errorFile).start()
 
         while (startedProcess.isAlive) {
             Thread.sleep(100)
@@ -23,6 +25,15 @@ fun executeAndPrint(vararg commandAndParams: String, outPath: File, workPath: Fi
 
         startedProcess.inputStream.close()
         startedProcess.errorStream.close()
+
+        if (errorFile.length()==0L) {
+            errorFile.delete()
+        }
+
+        if (outFile.length()==0L) {
+            outFile.delete()
+        }
+
         return startedProcess.exitValue()
     } catch(e: Exception) {
         e.printStackTrace()
