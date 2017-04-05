@@ -87,7 +87,7 @@ fun processWorkPackages() {
                     val result = executeAndPrint("./gradlew", "test", "-PsingleFlavor", workPath = toPath, outPath = outPath)
 
                     if (result == 0) {
-                        toPath.walk().filter { it.name == "tests" }.forEach { it.copyTo(File(outPath, it.name), true) }
+                        toPath.walk().filter { it.name == "tests" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
                         success
                     } else {
                         error
@@ -99,7 +99,7 @@ fun processWorkPackages() {
                     val result = executeAndPrint("./gradlew", "assembleRelease", workPath = toPath, outPath = outPath)
 
                     if (result == 0) {
-                        toPath.walk().filter { it.name.endsWith(".apk") }.forEach { it.copyTo(File(outPath, it.name), true) }
+                        toPath.walk().filter { it.name.endsWith(".apk") }.forEach { it.copyRecursively(File(outPath, it.name), true) }
                         success
                     } else {
                         error
