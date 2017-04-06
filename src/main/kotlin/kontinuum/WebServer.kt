@@ -26,7 +26,9 @@ fun startWebServer() {
             }
 
             get("/") {
-                var res = "<h1>Pending WorkPackages</h1>"
+                var res = "<html><head><title>Kontinuum Progress</title><meta http-equiv=\"refresh\" content=\"2\"></head><body>"
+
+                res += "<h1>Pending WorkPackages</h1>"
                 res += WorkPackageProvider.packages.filter { it.workPackageStatus == PENDING }.toHTML()
 
                 res += "<h1>WorkPackages in progress</h1>"
@@ -35,6 +37,7 @@ fun startWebServer() {
                 res += "<h1>Finished WorkPackages</h1>"
                 res += WorkPackageProvider.packages.filter { it.workPackageStatus == FINISHED }.toHTML()
 
+                res += "</body></html>"
                 call.respondText(res, ContentType.Text.Html)
             }
         }
