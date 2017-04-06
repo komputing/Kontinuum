@@ -2,13 +2,12 @@ package kontinuum
 
 import java.io.File
 
-fun executeAndPrint(vararg commandAndParams: String, outPath: File, workPath: File) : Int {
+fun executeAndPrint(commandAndParams: String, outPath: File, workPath: File) : Int {
 
     try {
+        println("executing $commandAndParams")
 
-        println("executing ${commandAndParams.joinToString(" ")}")
-
-        val process = ProcessBuilder(commandAndParams.asList()).directory(workPath)
+        val process = ProcessBuilder(commandAndParams.split(" ")).directory(workPath)
 
         process.environment().put("ANDROID_HOME", ConfigProvider.config.android_sdk_root)
 
