@@ -16,6 +16,9 @@ This is an attempt to replace my current Jenkins setup - this is an experiment a
  * Uninstalling the apps before running UI-tests
 
 
+![](https://gateway.ipfs.io/ipfs/QmeBnMfiQAzGaxeFqgh72vXhboSTwphGtcD9B8kduY3ri9)
+![](https://gateway.ipfs.io/ipfs/QmQFXM62kjm8oohou1VEU8JHRvqDHLus26hG95swHngM4C)
+
 Credits:
 
  - Icon: https://openclipart.org/detail/219802/mikey-rat-copywrong
