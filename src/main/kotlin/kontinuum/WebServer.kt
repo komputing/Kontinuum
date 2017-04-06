@@ -1,6 +1,7 @@
 package kontinuum
 
 import kontinuum.model.WorkPackage
+import kontinuum.model.WorkPackageStatus.*
 import org.jetbrains.ktor.application.call
 import org.jetbrains.ktor.http.ContentType
 import org.jetbrains.ktor.netty.embeddedNettyServer
@@ -19,15 +20,29 @@ fun startWebServer() {
                 call.request.headers["X-GitHub-Event"]?.let {
                     println("processing github event: " + it)
                     val payload = call.request.content[String::class]
-                    processWebHook(it,payload)
+                    processWebHook(it, payload)
                 }
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
             }
 
             get("/") {
-                WorkPackageProvider.packages.add(WorkPackage("ligi/passandroid","dc9bbdb11bef46e1437a7b99fe2f187dee8d92f2"))
-                call.respondText("Thanks GitHub!", ContentType.Text.Plain)
+                var res = "<h1>Pending WorkPackages</h1>"
+                res += WorkPackageProvider.packages.filter { it.workPackageStatus == PENDING }.toHTML()
+
+                res += "<h1>WorkPackages in progress</h1>"
+                res += WorkPackageProvider.packages.filter { it.workPackageStatus == PROCESSING }.toHTML()
+
+                res += "<h1>Finished WorkPackages</h1>"
+                res += WorkPackageProvider.packages.filter { it.workPackageStatus == FINISHED }.toHTML()
+
+                call.respondText(res, ContentType.Text.Html)
             }
         }
     }.start(wait = false)
+
+
 }
+
+fun List<WorkPackage>.toHTML() = map {
+    it.commitHash + "@" + it.project + "<br/>" + it.stageInfoList.map { it.stage + " " + it.status }.joinToString("<br/>")
+}.joinToString("<hr/>")

@@ -1,6 +1,9 @@
 package kontinuum
 
+import kontinuum.model.StageInfo
+import kontinuum.model.StageStatus
 import kontinuum.model.WorkPackage
+import kontinuum.model.WorkPackageStatus.*
 import kontinuum.model.github.GithubCommitState
 import kontinuum.model.github.GithubCommitState.*
 import kontinuum.model.github.GithubCommitStatus
@@ -15,9 +18,9 @@ import java.io.File
 fun processWorkPackages() {
     while (true) {
 
-        if (!WorkPackageProvider.packages.isEmpty()) {
+        WorkPackageProvider.packages.firstOrNull { it.workPackageStatus == PENDING }?.let { currentWorkPackage ->
 
-            val currentWorkPackage = WorkPackageProvider.packages.removeAt(0)
+            currentWorkPackage.workPackageStatus = PROCESSING
 
             println("processing work package: $currentWorkPackage")
 
@@ -69,12 +72,17 @@ fun processWorkPackages() {
                 } else {
                     val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
                     repoConfig.stages.forEach {
-                        println ("executing stage $it")
-                        executeStageByName(it,currentWorkPackage,toPath)
+                        println("executing stage $it")
+                        val stageInfo = StageInfo(it, StageStatus.PENDING, "")
+                        currentWorkPackage.stageInfoList.add(stageInfo)
+                        executeStageByName(it, currentWorkPackage, toPath, stageInfo)
                     }
                 }
             }
+
+            currentWorkPackage.workPackageStatus = FINISHED
         }
+
         Thread.sleep(1000)
     }
 
@@ -97,7 +105,7 @@ fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCo
 private fun addIPFS(outPath: File): String {
 
     val joinToString = ipfs.add.directory(outPath).map {
-        val name = it.Name.replace("file/","")
+        val name = it.Name.replace("file/", "")
         val url = it.Hash.hashAsIPFSURL()
         "<a href='$url'>$name</a>"
     }.joinToString("<br/>")
