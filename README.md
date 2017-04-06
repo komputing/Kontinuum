@@ -14,6 +14,7 @@ This is an attempt to replace my current Jenkins setup - this is an experiment a
  * API for status-monitoring
  * Create artifacts for tags
  * Uninstalling the apps before running UI-tests
+ * (very far away) Use [truebit](https://medium.com/@chriseth/truebit-c8b6a129d580) and reproducable builds for verification (check if build-servers are producing the correct output or are e.g. compromized)
 
 
 ![](https://gateway.ipfs.io/ipfs/QmeBnMfiQAzGaxeFqgh72vXhboSTwphGtcD9B8kduY3ri9)
