@@ -4,6 +4,7 @@ import kontinuum.model.WorkPackage
 import kontinuum.model.github.GithubCommitState
 import kontinuum.model.github.GithubCommitState.*
 import kontinuum.model.github.GithubCommitStatus
+import okio.Okio
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
@@ -62,49 +63,16 @@ fun processWorkPackages() {
             }
 
             if (git_res) {
-                doIn("spoon", currentWorkPackage, { outPath ->
-                    val spoonResult = executeAndPrint("./gradlew", "clean", "spoon", "-PsingleFlavor", workPath = toPath, outPath = outPath)
-                    println("finished spoon with " + spoonResult)
-                    toPath.walk().filter { it.name == "spoon" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
-
-                    if (spoonResult == 0) success else error
-                })
-
-                doIn("lint", currentWorkPackage, { outPath ->
-
-                    val result = executeAndPrint("./gradlew", "lint", "-PsingleFlavor", workPath = toPath, outPath = outPath)
-
-                    if (result == 0) {
-                        toPath.walk().filter { it.name.startsWith("lint-results") }.forEach { it.copyTo(File(outPath, it.name), true) }
-                        success
-                    } else {
-                        error
+                val configFile = File(toPath, ".ci/kontinuum.json")
+                if (!configFile.exists()) {
+                    println("kontinuum config for repo not found")
+                } else {
+                    val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
+                    repoConfig.stages.forEach {
+                        println ("executing stage $it")
+                        executeStageByName(it,currentWorkPackage,toPath)
                     }
-                })
-
-                doIn("test", currentWorkPackage, { outPath ->
-
-                    val result = executeAndPrint("./gradlew", "test", "-PsingleFlavor", workPath = toPath, outPath = outPath)
-
-                    if (result == 0) {
-                        toPath.walk().filter { it.name == "tests" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
-                        success
-                    } else {
-                        error
-                    }
-                })
-
-                doIn("assembleRelease", currentWorkPackage, { outPath ->
-
-                    val result = executeAndPrint("./gradlew", "assembleRelease", workPath = toPath, outPath = outPath)
-
-                    if (result == 0) {
-                        toPath.walk().filter { it.name.endsWith(".apk") || it.name.endsWith(".aar")  }.forEach { it.copyRecursively(File(outPath, it.name), true) }
-                        success
-                    } else {
-                        error
-                    }
-                })
+                }
             }
         }
         Thread.sleep(1000)
