@@ -35,8 +35,6 @@ fun executeGradle(stage: String, currentWorkPackage: WorkPackage, toPath: File, 
     doIn(stage, currentWorkPackage, { outPath ->
         val result = executeAndPrint("./gradlew $commandAndParams", workPath = toPath, outPath = outPath)
         postProcess(outPath, result)
-        toPath.walk().filter { it.name == "distributions" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         if (result == 0) success else error
-
     })
 }
