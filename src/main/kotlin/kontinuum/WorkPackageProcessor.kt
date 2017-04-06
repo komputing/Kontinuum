@@ -94,12 +94,12 @@ fun processWorkPackages() {
                     }
                 })
 
-                doIn("assemble", currentWorkPackage, { outPath ->
+                doIn("assembleRelease", currentWorkPackage, { outPath ->
 
                     val result = executeAndPrint("./gradlew", "assembleRelease", workPath = toPath, outPath = outPath)
 
                     if (result == 0) {
-                        toPath.walk().filter { it.name.endsWith(".apk") }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+                        toPath.walk().filter { it.name.endsWith(".apk") || it.name.endsWith(".aar")  }.forEach { it.copyRecursively(File(outPath, it.name), true) }
                         success
                     } else {
                         error
