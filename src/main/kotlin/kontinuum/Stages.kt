@@ -52,7 +52,19 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
             }
         })
 
-    }
+        // this stage is not for android - it is for kotlinkci - TODO fail if used wrongly
+        "build" -> doIn(stage, currentWorkPackage, { outPath ->
 
+            val result = executeAndPrint("./gradlew", "build", workPath = toPath, outPath = outPath)
+
+            if (result == 0) {
+                toPath.walk().filter { it.name == "distributions" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+                success
+            } else {
+                error
+            }
+        })
+
+    }
 
 }
