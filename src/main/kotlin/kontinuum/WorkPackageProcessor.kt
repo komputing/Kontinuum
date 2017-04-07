@@ -71,11 +71,19 @@ fun processWorkPackages() {
                     println("kontinuum config for repo not found")
                 } else {
                     val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
+                    var hadError = false
                     repoConfig.stages.forEach {
-                        println("executing stage $it")
-                        val stageInfo = StageInfo(it, StageStatus.PENDING, "")
-                        currentWorkPackage.stageInfoList.add(stageInfo)
-                        executeStageByName(it, currentWorkPackage, toPath, stageInfo)
+                        if (!hadError) {
+                            println("executing stage $it")
+                            val stageInfo = StageInfo(it, StageStatus.PENDING, "")
+                            currentWorkPackage.stageInfoList.add(stageInfo)
+                            executeStageByName(it, currentWorkPackage, toPath, stageInfo)
+                            if (stageInfo.status != StageStatus.SUCCESS) {
+                                hadError = true
+                            }
+                        } else {
+                            println("executing stage $it as another failed")
+                        }
                     }
                 }
             }
