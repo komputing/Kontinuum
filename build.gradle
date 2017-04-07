@@ -1,10 +1,11 @@
 buildscript {
     ext {
-        KOTLIN_VERSION = "1.1.1"
+        KOTLIN_VERSION = "1.1.2-eap-44"
     }
 
     repositories {
         mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'}
     }
 
     dependencies {
@@ -21,6 +22,7 @@ repositories {
     jcenter()
     maven { url 'http://dl.bintray.com/kotlin/ktor' }
     maven { url 'https://kotlin.bintray.com/kotlinx' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'}
     maven { url "https://jitpack.io" }
 }
 
