@@ -35,7 +35,7 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
 
 fun executeGradle(stage: String, currentWorkPackage: WorkPackage, stageInfo: StageInfo, toPath: File, commandAndParams: String, postProcess: (outPath: File, result: Int) -> Unit) {
     doIn(stage, currentWorkPackage, { outPath ->
-        val result = executeAndPrint("./gradlew $commandAndParams", workPath = toPath, outPath = outPath)
+        val result = executeAndPrint("./gradlew $commandAndParams -PisCI", workPath = toPath, outPath = outPath)
         postProcess(outPath, result)
         stageInfo.status = if (result == 0) StageStatus.SUCCESS else StageStatus.ERROR
         if (result == 0) success else error
