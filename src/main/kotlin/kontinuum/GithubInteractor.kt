@@ -58,17 +58,14 @@ fun getToken(): String? {
 fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) {
 
     val token = getToken()
-    println("got token:" + token)
 
     val commitStatusJson = commitStatusAdapter.toJson(status)
 
-    val commitStatus = executeCommand(
+    executeCommand(
             command = "repos/$full_repo/statuses/$commit_id",
             token = token!!,
             body = RequestBody.create(MediaType.parse("json"), commitStatusJson)
-    )
-
-    println("res: " + commitStatus)
+    ).body().close()
 
 }
 
