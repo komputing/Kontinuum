@@ -53,9 +53,13 @@ fun processWorkPackages() {
                 }
 
                 git.submoduleUpdate().call()
-                setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", success, "checkout done", "checkout")
 
                 println("processing commit: " + git.log().setMaxCount(1).call().first().fullMessage)
+
+                setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", success, "checkout done", "checkout")
+
+                println("cleaning: ")
+                executeAndPrint("./gradlew clean", toPath)
                 true
             } catch (e: JGitInternalException) {
                 val errorMessage = "error while checkout: " + e.message
