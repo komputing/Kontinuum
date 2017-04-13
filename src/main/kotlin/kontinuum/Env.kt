@@ -1,7 +1,10 @@
 package kontinuum
 
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import io.ipfs.kotlin.IPFS
+import kontinuum.model.WorkPackage
 import kontinuum.model.config.Config
 import kontinuum.model.config.RepoConfig
 import kontinuum.model.github.GithubCommitStatus
@@ -28,3 +31,6 @@ val pushEventAdapter = moshi.adapter(GithubPushEvent::class.java)!!
 val pullRequestEventAdapter = moshi.adapter(GithubPullRequestEvent::class.java)!!
 val configAdapter = moshi.adapter(Config::class.java)!!
 val repoConfigAdapter = moshi.adapter(RepoConfig::class.java)!!
+
+val workPackageListType = Types.newParameterizedType(List::class.java,WorkPackage::class.java)
+val workPackageProviderAdapter: JsonAdapter<List<WorkPackage>> = moshi.adapter(workPackageListType)!!

@@ -25,6 +25,11 @@ fun startWebServer() {
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
             }
 
+            get("/api") {
+                val jsonString = workPackageProviderAdapter.toJson(WorkPackageProvider.packages)
+                call.respondText(jsonString,ContentType.Application.Json)
+            }
+
             get("/") {
                 var res = "<html><head><title>Kontinuum Progress</title><meta http-equiv=\"refresh\" content=\"2\"></head><body>"
 
@@ -38,6 +43,7 @@ fun startWebServer() {
                 res += WorkPackageProvider.packages.filter { it.workPackageStatus == FINISHED }.toHTML()
 
                 res += "</body></html>"
+
                 call.respondText(res, ContentType.Text.Html)
             }
         }
