@@ -23,7 +23,9 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
         })
 
         "assemble" -> executeGradle(stage, currentWorkPackage, stageInfo, toPath, "assembleRelease", { outPath, _ ->
-            toPath.walk().filter { it.name.endsWith(".apk") || it.name.endsWith(".aar") }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+            toPath.walk().filter { it.name.endsWith(".apk") || it.name.endsWith(".aar") }.forEach {
+                it.copyRecursively(File(outPath, it.name), true)
+            }
         })
 
         // this stage is not for android - it is for kotlinkci - TODO fail if used wrongly
