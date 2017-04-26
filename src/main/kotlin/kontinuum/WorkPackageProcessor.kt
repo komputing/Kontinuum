@@ -64,7 +64,7 @@ fun processWorkPackages() {
             } catch (e: JGitInternalException) {
                 val errorMessage = "error while checkout: " + e.message
 
-                val hash = ipfs.add.string(e.getStacktraceAsStting()).Hash
+                val hash = ipfs.add.string(e.getStacktraceAsString()).Hash
                 setStatus(currentWorkPackage, hash.hashAsIPFSURL(), error, errorMessage, "checkout")
                 false
             }
