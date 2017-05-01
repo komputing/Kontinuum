@@ -9,7 +9,6 @@ import kontinuum.model.github.GithubCommitStatus
 import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.Response
 import java.io.File
 import java.security.KeyFactory
 import java.security.PrivateKey
@@ -44,15 +43,11 @@ fun getToken(): String? {
 
     val execute = executeCommand(command = "installations/${config.github.installation}/access_tokens", token = jwt, body = RequestBody.create(null, ByteArray(0)))
 
-    val result = tokenResponseAdapter.fromJson(execute.body().source())
-    execute.body().close()
-
-    if (execute.code() == 201) {
-        return result.token
-    } else {
-        println("problem getting token" + execute.code())
+    if (execute == null) {
         return null
     }
+    return tokenResponseAdapter.fromJson(execute).token
+
 }
 
 fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) {
@@ -65,17 +60,28 @@ fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) 
             command = "repos/$full_repo/statuses/$commit_id",
             token = token!!,
             body = RequestBody.create(MediaType.parse("json"), commitStatusJson)
-    ).body().close()
+    )
 
 }
 
-private fun executeCommand(command: String, token: String, body: RequestBody): Response {
+private fun executeCommand(command: String, token: String, body: RequestBody): String? {
     val request = Request.Builder()
             .post(body)
             .header("Authorization", "Bearer $token")
             .header("Accept", "application/vnd.github.machine-man-preview+json")
             .url("https://api.github.com/$command")
             .build()
-    return okhttp.newCall(request).execute()
+
+    val execute = okhttp.newCall(request).execute()
+    val res = execute.body().string()
+    execute.body().close()
+
+    if (execute.code() / 100 != 2) {
+        println("problem executing $command $res")
+        return null
+    }
+
+
+    return res
 }
 
