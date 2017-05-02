@@ -118,6 +118,10 @@ private fun addIPFS(outPath: File): String {
 
     val addedContent = ipfs.add.directory(outPath)
 
+    if (addedContent.size == 1) {
+        return addedContent.first().Hash.hashAsIPFSURL()
+    }
+
     val direct = addedContent.filter {
         Regex("^file/spoon/.*/debug$").matches(it.Name)
     }
