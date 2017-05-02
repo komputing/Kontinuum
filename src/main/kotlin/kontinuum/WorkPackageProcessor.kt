@@ -116,7 +116,17 @@ fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCo
 
 private fun addIPFS(outPath: File): String {
 
-    val joinToString = ipfs.add.directory(outPath).map {
+    val addedContent = ipfs.add.directory(outPath)
+
+    val direct = addedContent.filter {
+        Regex("^file/spoon/.*/debug$").matches(it.Name)
+    }
+
+    if (direct.size == 1) {
+        return direct.first().Hash.hashAsIPFSURL()
+    }
+
+    val joinToString = addedContent.map {
         val name = it.Name.replace("file/", "")
         val url = it.Hash.hashAsIPFSURL()
         "<a href='$url'>$name</a>"
