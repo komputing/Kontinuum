@@ -13,6 +13,8 @@ import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.submodule.SubmoduleWalk
 import java.io.File
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 fun processWorkPackages() {
@@ -54,7 +56,8 @@ fun processWorkPackages() {
 
                 git.submoduleUpdate().call()
 
-                println("processing commit: " + git.log().setMaxCount(1).call().first().fullMessage)
+                currentWorkPackage.commitMessage = git.log().setMaxCount(1).call().first().fullMessage
+                println("processing commit: " + currentWorkPackage.commitMessage)
 
                 setStatus(currentWorkPackage, "http://github.com/ligi/kontinuum", success, "checkout done", "checkout")
 
@@ -79,7 +82,8 @@ fun processWorkPackages() {
                     repoConfig.stages.forEach {
                         if (!hadError) {
                             println("executing stage $it")
-                            val stageInfo = StageInfo(it, StageStatus.PENDING, "")
+                            val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+                            val stageInfo = StageInfo(it, StageStatus.PENDING, "", epochSeconds)
                             currentWorkPackage.stageInfoList.add(stageInfo)
                             executeStageByName(it, currentWorkPackage, toPath, stageInfo)
                             if (stageInfo.status != StageStatus.SUCCESS) {
