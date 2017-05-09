@@ -86,6 +86,7 @@ fun processWorkPackages() {
                             val stageInfo = StageInfo(it, StageStatus.PENDING, "", epochSeconds)
                             currentWorkPackage.stageInfoList.add(stageInfo)
                             executeStageByName(it, currentWorkPackage, toPath, stageInfo)
+                            stageInfo.endEpochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
                             if (stageInfo.status != StageStatus.SUCCESS) {
                                 hadError = true
                             }
