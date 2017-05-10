@@ -105,17 +105,19 @@ fun processWorkPackages() {
 
 }
 
-fun doIn(name: String, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
-    println("entering $name")
-    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress", name)
+fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
+    println("entering ${stageInfo.stage}")
+    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress", stageInfo.stage)
 
-    val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + name)
+    val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + stageInfo.stage)
     outPath.mkdirs()
 
     val result = block.invoke(outPath)
 
-    println("finished $name with $result")
-    setStatus(workPackage, addIPFS(outPath), result, "result", name)
+    println("finished ${stageInfo.stage} with $result")
+    val url = addIPFS(outPath)
+    stageInfo.info = url
+    setStatus(workPackage, url, result, "result", stageInfo.stage)
 
 }
 

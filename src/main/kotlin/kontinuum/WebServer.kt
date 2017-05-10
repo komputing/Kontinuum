@@ -28,6 +28,21 @@ fun startWebServer() {
                 call.respondText(jsonString, ContentType.Application.Json)
             }
 
+            get("/") {
+                val html = """<html><head><meta http-equiv="refresh" content="1" /></head><body>""" +
+                        WorkPackageProvider.packages.sortedBy { it.epochSeconds }.map {
+                            """<h3>${it.project}</h3>
+                            ${it.branch} :${it.commitMessage}<br/>
+                            """ + it.stageInfoList.map {
+                                """
+                                ${it.stage}:  ${it.status} <a href="${it.info}">${it.info}</a>
+                                """
+                            }.joinToString("<br/>")
+                        }.joinToString("<hr/>") +
+                        "<body></html>"
+
+                call.respondText(html, ContentType.Text.Html)
+            }
         }
     }.start(wait = false)
 }
