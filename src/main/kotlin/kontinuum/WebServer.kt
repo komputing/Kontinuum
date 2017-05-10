@@ -24,13 +24,13 @@ fun startWebServer() {
             }
 
             get("/api") {
-                val jsonString = workPackageProviderAdapter.toJson(WorkPackageProvider.packages)
+                val jsonString = workPackageProviderAdapter.toJson(WorkPackageProvider.getSortedAndCleaned())
                 call.respondText(jsonString, ContentType.Application.Json)
             }
 
             get("/") {
                 val html = """<html><head><meta http-equiv="refresh" content="1" /></head><body>""" +
-                        WorkPackageProvider.packages.sortedBy { it.epochSeconds }.map {
+                        WorkPackageProvider.getSortedAndCleaned().map {
                             """<h3>${it.project}</h3>
                             ${it.branch} :${it.commitMessage}<br/>
                             """ + it.stageInfoList.map {
