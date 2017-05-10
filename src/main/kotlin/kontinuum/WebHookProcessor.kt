@@ -29,6 +29,13 @@ fun processWebHook(event: String, payload: String) {
             }
         }
 
+        "delete" -> {
+            val deleteInfo = pushEventAdapter.fromJson(payload)
+            WorkPackageProvider.packages.removeIf {
+                it.branch == deleteInfo.ref && it.project == deleteInfo.repository.full_name
+            }
+        }
+
         "pull_request" -> {
             val pullRequestInfo = pullRequestEventAdapter.fromJson(payload)
             println("processing pull-request from " + pullRequestEventAdapter)
