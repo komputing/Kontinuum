@@ -38,7 +38,7 @@ dependencies {
     compile 'org.jetbrains.ktor:ktor-netty:0.3.0'
 
     compile 'com.github.ligi:ipfs-api-kotlin:0.9'
-    compile 'com.github.ligi:kontinuum-model:0.3'
+    compile 'com.github.ligi:kontinuum-model:0.4'
 
     compile 'org.mortbay.jetty.alpn:alpn-boot:8.1.11.v20170118'
     

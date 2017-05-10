@@ -16,7 +16,16 @@ fun processWebHook(event: String, payload: String) {
 
             pushInfo.head_commit?.let {
                 val branch = pushInfo.ref.split("/").last()
-                WorkPackageProvider.packages.add(WorkPackage(branch= branch,project = pushInfo.repository.full_name, commitHash = it.id, workPackageStatus = PENDING, epochSeconds = epochSeconds))
+                val workPackage = WorkPackage(
+                        branch = branch,
+                        project = pushInfo.repository.full_name,
+                        commitHash = it.id,
+                        workPackageStatus = PENDING,
+                        epochSeconds = epochSeconds,
+                        installationId = pushInfo.installation.id
+                )
+
+                WorkPackageProvider.packages.add(workPackage)
             }
         }
 
@@ -26,7 +35,15 @@ fun processWebHook(event: String, payload: String) {
             //pullRequestInfo.pull_request.user + " to " + pullRequestInfo.pull_request.repo.full_name + " head commit:" + pullRequestInfo.pull_request.head)
 
             pullRequestInfo.pull_request.head?.let {
-                WorkPackageProvider.packages.add(WorkPackage(project = pullRequestInfo.pull_request.repo.full_name, commitHash = it.id, workPackageStatus = PENDING, epochSeconds = epochSeconds))
+                val workPackage = WorkPackage(
+                        project = pullRequestInfo.pull_request.repo.full_name,
+                        commitHash = it.id,
+                        workPackageStatus = PENDING,
+                        epochSeconds = epochSeconds,
+                        installationId = pullRequestInfo.installationInfo.id
+
+                )
+                WorkPackageProvider.packages.add(workPackage)
             }
         }
     }

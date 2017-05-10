@@ -23,7 +23,7 @@ fun obtain_private_key(private_key_file: File): PrivateKey {
     return KeyFactory.getInstance("RSA").generatePrivate(encodedKeySpec)
 }
 
-fun getToken(): String? {
+fun getToken(installation: String): String? {
 
     val claimsSet = JWTClaimsSet.Builder()
             .issuer(config.github.integration)
@@ -41,7 +41,7 @@ fun getToken(): String? {
 
     val jwt = signedJWT.serialize()
 
-    val execute = executeCommand(command = "installations/${config.github.installation}/access_tokens", token = jwt, body = RequestBody.create(null, ByteArray(0)))
+    val execute = executeCommand(command = "installations/${installation}/access_tokens", token = jwt, body = RequestBody.create(null, ByteArray(0)))
 
     if (execute == null) {
         return null
@@ -50,9 +50,9 @@ fun getToken(): String? {
 
 }
 
-fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus) {
+fun setStatus(full_repo: String, commit_id: String, status: GithubCommitStatus, installation: String) {
 
-    val token = getToken()
+    val token = getToken(installation)
 
     val commitStatusJson = commitStatusAdapter.toJson(status)
 

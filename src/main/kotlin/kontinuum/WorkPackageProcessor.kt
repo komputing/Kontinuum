@@ -33,7 +33,7 @@ fun processWorkPackages() {
             val git_res = try {
                 val git = if (!toPath.exists()) {
                     Git.cloneRepository()
-                            .setURI("https://x-access-token:" + getToken() + "@github.com/" + currentWorkPackage.project + ".git")
+                            .setURI("https://x-access-token:" + getToken(currentWorkPackage.installationId) + "@github.com/" + currentWorkPackage.project + ".git")
                             .setCloneSubmodules(true)
 
                             .setDirectory(toPath)
@@ -146,5 +146,5 @@ private fun addIPFS(outPath: File): String {
 
 private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
     val githubCommitStatus = GithubCommitStatus(state, target_url = url, description = description, context = "kontinuum/$context")
-    setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus)
+    setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus,currentWorkPackage.installationId)
 }

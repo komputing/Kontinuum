@@ -8,4 +8,5 @@ data class GithubPushEvent(val ref: String,
                            val head_commit: GithubCommit?,
                            val compare: String,
                            val pusher: GithubUser,
-                           val repository: GithubRepository)
+                           val repository: GithubRepository,
+                           val installation: GithubInstallationInfo)
