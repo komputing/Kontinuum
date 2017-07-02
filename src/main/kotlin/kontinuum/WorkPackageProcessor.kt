@@ -33,7 +33,7 @@ fun processWorkPackages() {
             val git_res = try {
                 val git = if (!toPath.exists()) {
                     Git.cloneRepository()
-                            .setURI("https://x-access-token:" + getToken(currentWorkPackage.installationId) + "@github.com/" + currentWorkPackage.project + ".git")
+                            .setURI("https://x-access-token:" + githubInteractor.getToken(currentWorkPackage.installationId) + "@github.com/" + currentWorkPackage.project + ".git")
                             .setCloneSubmodules(true)
 
                             .setDirectory(toPath)
@@ -79,7 +79,7 @@ fun processWorkPackages() {
                 } else {
                     val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
                     var hadError = false
-                    repoConfig.stages.forEach {
+                    repoConfig?.stages?.forEach {
                         if (!hadError) {
                             println("executing stage $it")
                             val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
@@ -148,5 +148,5 @@ private fun addIPFS(outPath: File): String {
 
 private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
     val githubCommitStatus = GithubCommitStatus(state, target_url = url, description = description, context = "kontinuum/$context")
-    setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus,currentWorkPackage.installationId)
+    githubInteractor.setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus, currentWorkPackage.installationId)
 }

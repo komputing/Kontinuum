@@ -6,7 +6,7 @@ import okio.Okio
 object ConfigProvider {
 
     val config: Config by lazy {
-        configAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
+        configAdapter.fromJson(Okio.buffer(Okio.source(configFile)))!!
     }
 
 }

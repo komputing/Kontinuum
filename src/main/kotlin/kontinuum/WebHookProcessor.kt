@@ -12,27 +12,31 @@ fun processWebHook(event: String, payload: String) {
     when (event) {
         "push" -> {
             val pushInfo = pushEventAdapter.fromJson(payload)
-            println("processing push from " + pushInfo.pusher.name + " to " + pushInfo.repository.full_name + " commits:" + pushInfo.commits.size)
+            if (pushInfo!=null) {
+                println("processing push from " + pushInfo.pusher.name + " to " + pushInfo.repository.full_name + " commits:" + pushInfo.commits.size)
 
-            pushInfo.head_commit?.let {
-                val branch = pushInfo.ref.split("/").last()
-                val workPackage = WorkPackage(
-                        branch = branch,
-                        project = pushInfo.repository.full_name,
-                        commitHash = it.id,
-                        workPackageStatus = PENDING,
-                        epochSeconds = epochSeconds,
-                        installationId = pushInfo.installation.id
-                )
+                pushInfo.head_commit?.let {
+                    val branch = pushInfo.ref.split("/").last()
+                    val workPackage = WorkPackage(
+                            branch = branch,
+                            project = pushInfo.repository.full_name,
+                            commitHash = it.id,
+                            workPackageStatus = PENDING,
+                            epochSeconds = epochSeconds,
+                            installationId = pushInfo.installation.id
+                    )
 
-                WorkPackageProvider.packages.add(workPackage)
+                    WorkPackageProvider.packages.add(workPackage)
+                }
             }
         }
 
         "delete" -> {
             val deleteInfo = pushEventAdapter.fromJson(payload)
-            WorkPackageProvider.packages.removeIf {
-                it.branch == deleteInfo.ref && it.project == deleteInfo.repository.full_name
+            if (deleteInfo!=null) {
+                WorkPackageProvider.packages.removeIf {
+                    it.branch == deleteInfo.ref && it.project == deleteInfo.repository.full_name
+                }
             }
         }
 
@@ -41,7 +45,7 @@ fun processWebHook(event: String, payload: String) {
             println("processing pull-request from " + pullRequestEventAdapter)
             //pullRequestInfo.pull_request.user + " to " + pullRequestInfo.pull_request.repo.full_name + " head commit:" + pullRequestInfo.pull_request.head)
 
-            pullRequestInfo.pull_request.head?.let {
+            pullRequestInfo?.pull_request?.head?.let {
                 val workPackage = WorkPackage(
                         project = pullRequestInfo.pull_request.repo.full_name,
                         commitHash = it.id,
