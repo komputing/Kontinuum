@@ -1,5 +1,6 @@
 package kontinuum
 
+import kontinuum.ConfigProvider.config
 import kontinuum.model.StageInfo
 import kontinuum.model.StageStatus
 import kontinuum.model.WorkPackage
@@ -12,12 +13,15 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.submodule.SubmoduleWalk
+import org.ligi.kithub.GithubApplicationAPI
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 
+val githubInteractor by lazy { GithubApplicationAPI(config.github.integration, File(config.github.cert)) }
 
 fun processWorkPackages() {
+
     while (true) {
 
         WorkPackageProvider.packages.firstOrNull { it.workPackageStatus == PENDING }?.let { currentWorkPackage ->
