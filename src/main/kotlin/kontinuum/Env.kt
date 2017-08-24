@@ -1,6 +1,7 @@
 package kontinuum
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.ipfs.kotlin.IPFS
@@ -20,7 +21,9 @@ val tmpDir = File("tmp")
 val outDir = File("out")
 
 val okhttp = OkHttpClient.Builder().build()!!
-val moshi = Moshi.Builder().build()!!
+val moshi : Moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
 
 val ipfs = IPFS(okHttpClient = OkHttpClient.Builder()
         .writeTimeout(5, TimeUnit.MINUTES)
