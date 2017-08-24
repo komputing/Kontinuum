@@ -1,8 +1,9 @@
 package kontinuum
 
-import org.jetbrains.ktor.application.call
+import org.jetbrains.ktor.content.readText
+import org.jetbrains.ktor.host.embeddedServer
 import org.jetbrains.ktor.http.ContentType
-import org.jetbrains.ktor.netty.embeddedNettyServer
+import org.jetbrains.ktor.netty.Netty
 import org.jetbrains.ktor.response.respondText
 import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.post
@@ -11,13 +12,13 @@ import org.jetbrains.ktor.routing.routing
 
 fun startWebServer() {
 
-    embeddedNettyServer(9001) {
+    embeddedServer(Netty, 9001) {
         routing {
             post("/") {
 
                 call.request.headers["X-GitHub-Event"]?.let {
                     println("processing github event: $it")
-                    val payload = call.request.content[String::class]
+                    val payload = call.request.receiveContent().readText()
                     processWebHook(it, payload)
                 }
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
@@ -31,13 +32,10 @@ fun startWebServer() {
             get("/") {
                 val html = """<html><head><meta http-equiv="refresh" content="1" /></head><body>""" +
                         WorkPackageProvider.getSortedAndCleaned().map {
-                            """<h3>${it.project}</h3>
-                            ${it.branch} :${it.commitMessage}<br/>
-                            """ + it.stageInfoList.map {
-                                """
-                                ${it.stage}:  ${it.status} <a href="${it.info}">${it.info}</a>
-                                """
-                            }.joinToString("<br/>")
+                            """<h3>${it.project}</h3>${it.branch} :${it.commitMessage}<br/>""" +
+                                    it.stageInfoList.joinToString("<br/>") {
+                                        """${it.stage}:  ${it.status} <a href="${it.info}">${it.info}</a>"""
+                                    }
                         }.joinToString("<hr/>") +
                         "<body></html>"
 
