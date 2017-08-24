@@ -45,5 +45,5 @@ dependencies {
 
     compile 'org.mortbay.jetty.alpn:alpn-boot:8.1.11.v20170118'
     
-    testCompile 'org.assertj:assertj-core:3.6.2'
+    testCompile 'org.assertj:assertj-core:3.8.0'
 }
