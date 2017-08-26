@@ -147,6 +147,7 @@ private fun addIPFS(outPath: File): String {
         "<a href='$url'>$name</a>"
     }
 
+    println("add to ipfs st " + joinToString)
     return ipfs.add.string(joinToString).Hash.hashAsIPFSURL()
 }
 
