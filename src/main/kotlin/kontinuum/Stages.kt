@@ -38,7 +38,9 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
         "run" -> executeGradle(currentWorkPackage, stageInfo, toPath, "run", { outPath, _ ->
             toPath.walk().filter {
                 println("found " + it.name)
-                it.name == "output" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+                it.name == "output" }.forEach {
+                println("copy " + it.name)
+                it.copyRecursively(File(outPath, it.name), true) }
         })
     }
 }
