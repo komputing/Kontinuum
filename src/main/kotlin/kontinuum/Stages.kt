@@ -39,7 +39,7 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
             toPath.walk().filter {
                 println("found " + it.name)
                 it.name == "output" }.forEach {
-                println("copy " + it.name)
+                println("copy " + it.name + " to " + outPath)
                 it.copyRecursively(File(outPath, it.name), true) }
         })
     }
