@@ -126,9 +126,9 @@ fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> 
 }
 
 private fun addIPFS(outPath: File): String {
-
+    println("add to ipfs " + outPath)
     val addedContent = ipfs.add.directory(outPath)
-
+    println("add to ipfs " + addedContent)
     if (addedContent.size == 1) {
         return addedContent.first().Hash.hashAsIPFSURL()
     }
@@ -141,11 +141,11 @@ private fun addIPFS(outPath: File): String {
         return direct.first().Hash.hashAsIPFSURL()
     }
 
-    val joinToString = addedContent.map {
+    val joinToString = addedContent.joinToString("<br/>") {
         val name = it.Name.replace("file/", "")
         val url = it.Hash.hashAsIPFSURL()
         "<a href='$url'>$name</a>"
-    }.joinToString("<br/>")
+    }
 
     return ipfs.add.string(joinToString).Hash.hashAsIPFSURL()
 }
