@@ -8,9 +8,10 @@ import io.ipfs.kotlin.IPFS
 import kontinuum.model.WorkPackage
 import kontinuum.model.config.Config
 import kontinuum.model.config.RepoConfig
-import kontinuum.model.github.GithubPullRequestEvent
-import kontinuum.model.github.GithubPushEvent
 import okhttp3.OkHttpClient
+import org.ligi.kithub.model.GithubIssueCommentEvent
+import org.ligi.kithub.model.GithubPullRequestEvent
+import org.ligi.kithub.model.GithubPushEvent
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -30,6 +31,7 @@ val ipfs = IPFS(okHttpClient = OkHttpClient.Builder()
         .readTimeout(5, TimeUnit.MINUTES).build())
 
 val pushEventAdapter = moshi.adapter(GithubPushEvent::class.java)!!
+val issueCommentEventAdapter = moshi.adapter(GithubIssueCommentEvent::class.java)!!
 val pullRequestEventAdapter = moshi.adapter(GithubPullRequestEvent::class.java)!!
 val configAdapter = moshi.adapter(Config::class.java)!!
 val repoConfigAdapter = moshi.adapter(RepoConfig::class.java)!!

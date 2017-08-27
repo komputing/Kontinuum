@@ -3,8 +3,8 @@ package kontinuum
 import kontinuum.model.StageInfo
 import kontinuum.model.StageStatus
 import kontinuum.model.WorkPackage
-import kontinuum.model.github.GithubCommitState.error
-import kontinuum.model.github.GithubCommitState.success
+import org.ligi.kithub.model.GithubCommitState.error
+import org.ligi.kithub.model.GithubCommitState.success
 import java.io.File
 
 fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: File, stageInfo: StageInfo) {
