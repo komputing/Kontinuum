@@ -122,7 +122,7 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
 
 fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
     println("entering ${stageInfo.stage}")
-    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "spoon in progress", stageInfo.stage)
+    setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "in progress", stageInfo.stage)
 
     val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + stageInfo.stage)
     outPath.mkdirs()
