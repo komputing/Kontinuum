@@ -11,8 +11,13 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
 
     when (stage) {
         "spoon" -> executeGradle(currentWorkPackage, stageInfo, toPath, "spoon -PsingleFlavor", { outPath, _ ->
-            toPath.walk().filter { it.name == "spoon" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
-            toPath.walk().filter { it.name == "spoon-output" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+            val spoon2Results = toPath.walk().filter { it.name == "spoon-output" }.toList()
+            spoon2Results.forEach { it.copyRecursively(File(outPath, it.name), true) }
+
+            if (spoon2Results.isEmpty()) {
+                toPath.walk().filter { it.name == "spoon" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+            }
+
         })
 
         "lint" -> executeGradle(currentWorkPackage, stageInfo, toPath, "lint -PsingleFlavor", { outPath, _ ->
