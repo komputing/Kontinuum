@@ -12,6 +12,7 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
     when (stage) {
         "spoon" -> executeGradle(currentWorkPackage, stageInfo, toPath, "spoon -PsingleFlavor", { outPath, _ ->
             toPath.walk().filter { it.name == "spoon" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+            toPath.walk().filter { it.name == "spoon-output" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         })
 
         "lint" -> executeGradle(currentWorkPackage, stageInfo, toPath, "lint -PsingleFlavor", { outPath, _ ->
@@ -30,7 +31,7 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
             copyAPKandAAR(toPath, outPath)
         })
 
-    // this stage is not for android - it is for kotlinkci - TODO fail if used wrongly
+        // this stage is not for android - it is for kotlinkci - TODO fail if used wrongly
         "build" -> executeGradle(currentWorkPackage, stageInfo, toPath, "build", { outPath, _ ->
             toPath.walk().filter { it.name == "distributions" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         })
