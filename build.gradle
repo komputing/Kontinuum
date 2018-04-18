@@ -29,7 +29,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:${KOTLIN_VERSION}"
 
-    compile 'com.nimbusds:nimbus-jose-jwt:4.41.2'
+    compile 'com.nimbusds:nimbus-jose-jwt:5.9'
     compile 'com.squareup.moshi:moshi:1.5.0'
     compile 'com.squareup.moshi:moshi-kotlin:1.5.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
