@@ -44,6 +44,15 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
         "run" -> executeGradle(currentWorkPackage, stageInfo, toPath, "run", { outPath, _ ->
             toPath.walk().filter { it.name == "output" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         })
+
+        else -> {
+            if (stage.contains("Composer")) {
+                executeGradle(currentWorkPackage, stageInfo, toPath, "$stage -PsingleFlavor", { outPath, _ ->
+                    val expectedDir=stage.replace("Composer","").replaceFirst("test","").decapitalize()
+                    toPath.walk().filter { it.name == expectedDir }.forEach { it.copyRecursively(File(outPath, it.name), true) }
+                })
+            }
+        }
     }
 }
 
