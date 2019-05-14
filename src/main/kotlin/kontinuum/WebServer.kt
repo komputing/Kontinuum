@@ -1,14 +1,14 @@
 package kontinuum
 
-import org.jetbrains.ktor.content.readText
-import org.jetbrains.ktor.host.embeddedServer
-import org.jetbrains.ktor.http.ContentType
-import org.jetbrains.ktor.netty.Netty
-import org.jetbrains.ktor.response.respondText
-import org.jetbrains.ktor.routing.get
-import org.jetbrains.ktor.routing.post
-import org.jetbrains.ktor.routing.routing
-
+import io.ktor.application.call
+import io.ktor.http.ContentType
+import io.ktor.request.document
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 
 fun startWebServer() {
 
@@ -18,7 +18,7 @@ fun startWebServer() {
 
                 call.request.headers["X-GitHub-Event"]?.let {
                     println("processing github event: $it")
-                    val payload = call.request.receiveContent().readText()
+                    val payload = call.request.document().reader().readText()
                     processWebHook(it, payload)
                 }
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
