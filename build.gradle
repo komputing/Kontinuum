@@ -38,7 +38,7 @@ dependencies {
     implementation 'io.ktor:ktor-server-core:1.2.0'
     implementation 'io.ktor:ktor-server-netty:1.2.0'
 
-    implementation 'com.github.ligi:ipfs-api-kotlin:0.12'
+    implementation 'com.github.ligi:ipfs-api-kotlin:0.14'
     implementation 'com.github.ligi:kontinuum-model:0.4'
     implementation 'com.github.ligi.kithub:api:0.11'
 

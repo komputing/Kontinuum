@@ -5,6 +5,7 @@ import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.ipfs.kotlin.IPFS
+import io.ipfs.kotlin.IPFSConfiguration
 import kontinuum.model.WorkPackage
 import kontinuum.model.config.Config
 import kontinuum.model.config.RepoConfig
@@ -21,16 +22,19 @@ val workspaceDir = File("workspace")
 val tmpDir = File("tmp")
 val outDir = File("out")
 
-val okhttp = OkHttpClient.Builder().build()!!
-val moshi : Moshi = Moshi.Builder()
+val moshi: Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 
-val ipfs = IPFS(okHttpClient = OkHttpClient.Builder()
-        .writeTimeout(5, TimeUnit.MINUTES)
-        .readTimeout(5, TimeUnit.MINUTES).build())
+val ipfs = IPFS(IPFSConfiguration(okHttpClient = createOKHtttpClient()))
 
 val pushEventAdapter = moshi.adapter(GithubPushEvent::class.java)!!
+
+private fun createOKHtttpClient() = OkHttpClient.Builder()
+        .writeTimeout(5, TimeUnit.MINUTES)
+        .readTimeout(5, TimeUnit.MINUTES).build()
+
+
 val issueCommentEventAdapter = moshi.adapter(GithubIssueCommentEvent::class.java)!!
 val pullRequestEventAdapter = moshi.adapter(GithubPullRequestEvent::class.java)!!
 val configAdapter = moshi.adapter(Config::class.java)!!
