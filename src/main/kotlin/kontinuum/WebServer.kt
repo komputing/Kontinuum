@@ -2,7 +2,7 @@ package kontinuum
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
-import io.ktor.request.document
+import io.ktor.request.receiveText
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -18,7 +18,7 @@ fun startWebServer() {
 
                 call.request.headers["X-GitHub-Event"]?.let {
                     println("processing github event: $it")
-                    val payload = call.request.document().reader().readText()
+                    val payload = call.receiveText()
                     processWebHook(it, payload)
                 }
                 call.respondText("Thanks GitHub!", ContentType.Text.Plain)
