@@ -4,7 +4,7 @@ import kontinuum.ConfigProvider.config
 import java.lang.System.exit
 import java.net.ConnectException
 
-fun main(args: Array<String>) {
+fun main() {
 
     if (!configFile.exists()) {
         println("config not found at $configFile")
