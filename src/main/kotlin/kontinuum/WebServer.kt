@@ -31,12 +31,12 @@ fun startWebServer() {
 
             get("/") {
                 val html = """<html><head><meta http-equiv="refresh" content="1" /></head><body>""" +
-                        WorkPackageProvider.getSortedAndCleaned().map {
-                            """<h3>${it.project}</h3>${it.branch} :${it.commitMessage}<br/>""" +
-                                    it.stageInfoList.joinToString("<br/>") {
+                        WorkPackageProvider.getSortedAndCleaned().joinToString("<hr/>") { pkg ->
+                            """<h3>${pkg.project}</h3>${pkg.branch} :${pkg.commitMessage}<br/>""" +
+                                    pkg.stageInfoList.joinToString("<br/>") {
                                         """${it.stage}:  ${it.status} <a href="${it.info}">${it.info}</a>"""
                                     }
-                        }.joinToString("<hr/>") +
+                        } +
                         "<body></html>"
 
                 call.respondText(html, ContentType.Text.Html)
