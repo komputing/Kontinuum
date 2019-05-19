@@ -99,18 +99,20 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
             val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
             var hadError = false
             repoConfig?.stages?.forEach {
-                if (!hadError) {
-                    println("executing stage $it")
-                    val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
-                    val stageInfo = StageInfo(it, StageStatus.PENDING, "", epochSeconds)
-                    currentWorkPackage.stageInfoList.add(stageInfo)
-                    executeStageByName(it, currentWorkPackage, toPath, stageInfo)
-                    stageInfo.endEpochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
-                    if (stageInfo.status != StageStatus.SUCCESS) {
-                        hadError = true
+                when {
+                    hadError -> println("not executing stage $it as another failed")
+                    it.needsEmulator && !config.hasEmulator -> println("skipping stage as emulator needed but not present")
+                    else -> {
+                        println("executing stage $it")
+                        val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        val stageInfo = StageInfo(it.name, StageStatus.PENDING, "", epochSeconds)
+                        currentWorkPackage.stageInfoList.add(stageInfo)
+                        executeStageByName(it.name, currentWorkPackage, toPath, stageInfo)
+                        stageInfo.endEpochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        if (stageInfo.status != StageStatus.SUCCESS) {
+                            hadError = true
+                        }
                     }
-                } else {
-                    println("executing stage $it as another failed")
                 }
             }
         }
