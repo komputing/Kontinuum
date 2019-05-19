@@ -9,7 +9,7 @@ fun executeAndPrint(commandAndParams: String, workPath: File, outPath: File? = n
 
         val process = ProcessBuilder(commandAndParams.split(" ")).directory(workPath)
 
-        process.environment().put("ANDROID_HOME", ConfigProvider.config.android_sdk_root)
+        process.environment()["ANDROID_HOME"] = ConfigProvider.config.android_sdk_root
 
         val startedProcess = process.start()
 
