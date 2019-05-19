@@ -19,7 +19,11 @@ import java.util.concurrent.TimeUnit
 val basePath = File("..")
 val configFile = File(basePath, "/kontinuum_config.json")
 
-val workspaceDir = File("workspace")
+val workspaceDir by lazy {
+    File(ConfigProvider.config.workspace_root).apply {
+        mkdirs()
+    }
+}
 val tmpDir = File("tmp")
 val outDir = File("out")
 
