@@ -16,7 +16,8 @@ import org.ligi.kithub.model.GithubPushEvent
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-val configFile = File("../kontinuum_config.json")
+val basePath = File("..")
+val configFile = File(basePath, "/kontinuum_config.json")
 
 val workspaceDir = File("workspace")
 val tmpDir = File("tmp")

@@ -18,7 +18,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-val githubInteractor by lazy { GithubApplicationAPI(config.github.integration, File(config.github.cert)) }
+val githubInteractor by lazy { GithubApplicationAPI(config.github.integration, File(basePath, config.github.cert)) }
 
 fun processWorkPackages() {
 
