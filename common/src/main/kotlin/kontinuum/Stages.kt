@@ -28,7 +28,7 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
             toPath.walk().filter { it.name == "tests" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         }
 
-        "assemble" -> executeGradle(currentWorkPackage, stageInfo, toPath, "assembleRelease") { outPath, _ ->
+        "assemble", "assembleRelease" -> executeGradle(currentWorkPackage, stageInfo, toPath, "assembleRelease") { outPath, _ ->
             copyAPKandAAR(toPath, outPath)
         }
 
