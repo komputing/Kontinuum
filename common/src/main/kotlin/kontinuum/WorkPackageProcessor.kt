@@ -124,7 +124,7 @@ fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> 
     println("entering ${stageInfo.stage}")
     setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "in progress", stageInfo.stage)
 
-    val outPath = java.io.File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + stageInfo.stage)
+    val outPath = File(outDir, workPackage.project + "/" + workPackage.commitHash + "/" + stageInfo.stage)
     outPath.mkdirs()
 
     val result = block.invoke(outPath)
@@ -152,11 +152,11 @@ private fun addIPFS(outPath: File): String {
         return direct.first().Hash.hashAsIPFSURL()
     }
 
-    val joinToString = addedContent.map {
+    val joinToString = addedContent.joinToString("<br/>") {
         val name = it.Name.replace("file/", "")
         val url = it.Hash.hashAsIPFSURL()
         "<a href='$url'>$name</a>"
-    }.joinToString("<br/>")
+    }
 
     return ipfs.add.string(joinToString).Hash.hashAsIPFSURL()
 }
