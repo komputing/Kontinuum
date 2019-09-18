@@ -87,7 +87,7 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
         val errorMessage = "error while checkout: " + e.message
 
         val hash = ipfs.add.string(e.getStacktraceAsString()).Hash
-        setStatus(currentWorkPackage, hash.hashAsIPFSURL(), error, errorMessage, "checkout")
+        setStatus(currentWorkPackage, hash.hashAsIPFSGatewayURL(), error, errorMessage, "checkout")
         false
     }
 
