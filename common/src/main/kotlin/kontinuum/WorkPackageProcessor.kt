@@ -160,7 +160,7 @@ private fun addIPFS(outPath: File): String {
         "<a href='$url'>$name</a>"
     }
 
-    return ipfs.add.string(joinToString).Hash.hashAsIPFSURL()
+    return ipfs.add.string(joinToString).Hash.hashAsIPFSGatewayURL()
 }
 
 private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
