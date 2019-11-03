@@ -5,6 +5,9 @@ import kontinuum.model.StageInfo
 import kontinuum.model.StageStatus
 import kontinuum.model.WorkPackage
 import kontinuum.model.WorkPackageStatus.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okio.buffer
 import okio.source
 import org.eclipse.jgit.api.Git
@@ -19,7 +22,13 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-val githubInteractor by lazy { GithubApplicationAPI(config.github.integration, File(basePath, config.github.cert)) }
+val githubInteractor by lazy {
+    GithubApplicationAPI(
+            integration = config.github.integration,
+            cert = File(basePath, config.github.cert),
+            moshi = moshi
+    )
+}
 
 fun processWorkPackages() {
 
@@ -40,7 +49,7 @@ fun processWorkPackages() {
 
 }
 
-private fun processWorkPackage(currentWorkPackage: WorkPackage) {
+private fun processWorkPackage(currentWorkPackage: WorkPackage) = GlobalScope.launch {
 
     currentWorkPackage.workPackageStatus = PROCESSING
 
@@ -109,7 +118,11 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
                         val stageInfo = StageInfo(it.name, StageStatus.PENDING, "", epochSeconds)
                         currentWorkPackage.stageInfoList.add(stageInfo)
                         executeStageByName(it.name, currentWorkPackage, toPath, stageInfo)
+                        while (stageInfo.status == StageStatus.PENDING) {
+                            delay(50)
+                        }
                         stageInfo.endEpochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+
                         if (stageInfo.status != StageStatus.SUCCESS) {
                             hadError = true
                         }
@@ -123,7 +136,7 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
 }
 
 
-fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) {
+fun doIn(stageInfo: StageInfo, workPackage: WorkPackage, block: (path: File) -> GithubCommitState) = GlobalScope.launch {
     println("entering ${stageInfo.stage}")
     setStatus(workPackage, "http://github.com/ligi/kontinuum", pending, "in progress", stageInfo.stage)
 
@@ -164,7 +177,7 @@ private fun addIPFS(outPath: File): String {
     return ipfs.add.string(joinToString).Hash.hashAsIPFSGatewayURL()
 }
 
-private fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
+private suspend fun setStatus(currentWorkPackage: WorkPackage, url: String, state: GithubCommitState, description: String, context: String) {
     val githubCommitStatus = GithubCommitStatus(state, target_url = url, description = description, context = "kontinuum/$context")
     githubInteractor.setStatus(currentWorkPackage.project, currentWorkPackage.commitHash, githubCommitStatus, currentWorkPackage.installationId)
 }
