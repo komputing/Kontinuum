@@ -38,8 +38,8 @@ suspend fun main() {
             val packages = workPackageProviderAdapter.fromJson(res)
 
             packages?.forEach { newPackage ->
-                val exisiting = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
-                if (exisiting == null) {
+                val existing = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
+                if (existing == null) {
                     val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
                     WorkPackageProvider.packages.add(WorkPackage(
                             branch = newPackage.branch,
