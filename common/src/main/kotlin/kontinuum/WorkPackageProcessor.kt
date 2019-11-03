@@ -5,7 +5,8 @@ import kontinuum.model.StageInfo
 import kontinuum.model.StageStatus
 import kontinuum.model.WorkPackage
 import kontinuum.model.WorkPackageStatus.*
-import okio.Okio
+import okio.buffer
+import okio.source
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
@@ -96,7 +97,7 @@ private fun processWorkPackage(currentWorkPackage: WorkPackage) {
         if (!configFile.exists()) {
             println("kontinuum config for repo not found")
         } else {
-            val repoConfig = repoConfigAdapter.fromJson(Okio.buffer(Okio.source(configFile)))
+            val repoConfig = repoConfigAdapter.fromJson(configFile.source().buffer())
             var hadError = false
             repoConfig?.stages?.forEach {
                 when {

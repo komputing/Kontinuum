@@ -1,12 +1,13 @@
 package kontinuum
 
 import kontinuum.model.config.Config
-import okio.Okio
+import okio.buffer
+import okio.source
 
 object ConfigProvider {
 
     val config: Config by lazy {
-        configAdapter.fromJson(Okio.buffer(Okio.source(configFile)))!!
+        configAdapter.fromJson(configFile.source().buffer())!!
     }
 
 }
