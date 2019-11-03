@@ -1,13 +1,13 @@
 package kontinuum
 
 import kontinuum.ConfigProvider.config
-import java.lang.System.exit
+import kotlin.system.exitProcess
 
 fun main() {
 
     if (!configFile.exists()) {
         println("config not found at $configFile")
-        exit(1)
+        exitProcess(1)
     }
 
     val versionOfIPFS = ipfs.info.version()
