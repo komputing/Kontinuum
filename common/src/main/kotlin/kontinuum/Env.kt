@@ -31,7 +31,7 @@ val moshi: Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 
-val ipfs = IPFS(IPFSConfiguration(okHttpClient = createOKHtttpClient()))
+val ipfs = IPFS(IPFSConfiguration(okHttpClient = createOKHtttpClient(), moshi = moshi))
 
 val pushEventAdapter = moshi.adapter(GithubPushEvent::class.java)!!
 
