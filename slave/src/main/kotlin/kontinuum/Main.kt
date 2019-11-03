@@ -9,15 +9,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.lang.System.exit
 import java.time.LocalDateTime
 import java.time.ZoneId
+import kotlin.system.exitProcess
 
 suspend fun main() {
 
     if (!configFile.exists()) {
         println("config not found at $configFile")
-        exit(1)
+        exitProcess(1)
     }
 
     val versionOfIPFS = ipfs.info.version()
