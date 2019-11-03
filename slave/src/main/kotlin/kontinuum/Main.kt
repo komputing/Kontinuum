@@ -33,24 +33,26 @@ suspend fun main() {
     GlobalScope.launch(Dispatchers.Default) {
         while (true) {
             val okHttpClient = OkHttpClient.Builder().build()
-            val res = okHttpClient.newCall(Request.Builder().url("http://builder.komputing.org/api").build()).execute().body()?.string()
+            val request = Request.Builder().url("http://builder.komputing.org/api")
+            okHttpClient.newCall(request.build()).execute().body()?.string()?.let { stringResponse ->
 
-            val packages = workPackageProviderAdapter.fromJson(res)
+                val packages = workPackageProviderAdapter.fromJson(stringResponse)
 
-            packages?.forEach { newPackage ->
-                val existing = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
-                if (existing == null) {
-                    val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
-                    WorkPackageProvider.packages.add(WorkPackage(
-                            branch = newPackage.branch,
-                            project = newPackage.project,
-                            commitHash = newPackage.commitHash,
-                            workPackageStatus = WorkPackageStatus.PENDING,
-                            epochSeconds = epochSeconds,
-                            installationId = newPackage.installationId
-                    )
+                packages?.forEach { newPackage ->
+                    val existing = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
+                    if (existing == null) {
+                        val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        WorkPackageProvider.packages.add(WorkPackage(
+                                branch = newPackage.branch,
+                                project = newPackage.project,
+                                commitHash = newPackage.commitHash,
+                                workPackageStatus = WorkPackageStatus.PENDING,
+                                epochSeconds = epochSeconds,
+                                installationId = newPackage.installationId
+                        )
 
-                    )
+                        )
+                    }
                 }
             }
             delay(5000)
