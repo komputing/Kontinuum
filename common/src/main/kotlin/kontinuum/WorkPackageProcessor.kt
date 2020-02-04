@@ -157,7 +157,7 @@ private fun addIPFS(outPath: File): String {
     val addedContent = ipfs.add.directory(outPath)
 
     if (addedContent.size == 1) {
-        return addedContent.first().Hash.hashAsIPFSURL()
+        return addedContent.first().Hash.hashAsIPFSGatewayURL()
     }
 
     val direct = addedContent.filter {
@@ -165,12 +165,12 @@ private fun addIPFS(outPath: File): String {
     }
 
     if (direct.size == 1) {
-        return direct.first().Hash.hashAsIPFSURL()
+        return direct.first().Hash.hashAsIPFSGatewayURL()
     }
 
     val joinToString = addedContent.joinToString("<br/>") {
         val name = it.Name.replace("file/", "")
-        val url = it.Hash.hashAsIPFSURL()
+        val url = it.Hash.hashAsIPFSGatewayURL()
         "<a href='$url'>$name</a>"
     }
 

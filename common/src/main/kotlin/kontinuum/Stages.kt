@@ -25,6 +25,9 @@ fun executeStageByName(stage: String, currentWorkPackage: WorkPackage, toPath: F
         }
 
         "test" -> executeGradle(currentWorkPackage, stageInfo, toPath, "test -PsingleFlavor") { outPath, _ ->
+            buildString {
+
+            }
             toPath.walk().filter { it.name == "tests" }.forEach { it.copyRecursively(File(outPath, it.name), true) }
         }
 
