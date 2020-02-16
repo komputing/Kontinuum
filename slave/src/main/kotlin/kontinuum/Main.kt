@@ -31,37 +31,41 @@ suspend fun main() {
         var initialRun = true
         val initialCommitHashBlacklist = mutableSetOf<String>()
         while (isActive) {
-            val okHttpClient = OkHttpClient.Builder().build()
-            val request = Request.Builder().url("http://builder.komputing.org/api")
-            okHttpClient.newCall(request.build()).execute().body()?.string()?.let { stringResponse ->
+            try {
+                val okHttpClient = OkHttpClient.Builder().build()
+                val request = Request.Builder().url("http://builder.komputing.org/api")
+                okHttpClient.newCall(request.build()).execute().body()?.string()?.let { stringResponse ->
 
-                val packages = workPackageProviderAdapter.fromJson(stringResponse)
+                    val packages = workPackageProviderAdapter.fromJson(stringResponse)
 
-                if (initialRun) {
-                    packages?.forEachIndexed { index, workPackage ->
-                        if (index != 0) {
-                            initialCommitHashBlacklist.add(workPackage.commitHash)
+                    if (initialRun) {
+                        packages?.forEachIndexed { index, workPackage ->
+                            if (index != 0) {
+                                initialCommitHashBlacklist.add(workPackage.commitHash)
+                            }
+                        }
+                    }
+                    initialRun = false
+                    packages?.forEach { newPackage ->
+                        if (!initialCommitHashBlacklist.contains(newPackage.commitHash)) {
+                            val existing = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
+                            if (existing == null) {
+                                val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
+                                val newWorkPackage = WorkPackage(
+                                        branch = newPackage.branch,
+                                        project = newPackage.project,
+                                        commitHash = newPackage.commitHash,
+                                        workPackageStatus = WorkPackageStatus.PENDING,
+                                        epochSeconds = epochSeconds,
+                                        installationId = newPackage.installationId
+                                )
+                                WorkPackageProvider.packages.add(newWorkPackage)
+                            }
                         }
                     }
                 }
-                initialRun = false
-                packages?.forEach { newPackage ->
-                    if (!initialCommitHashBlacklist.contains(newPackage.commitHash)) {
-                        val existing = WorkPackageProvider.packages.firstOrNull { it.commitHash == newPackage.commitHash }
-                        if (existing == null) {
-                            val epochSeconds = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond()
-                            val newWorkPackage = WorkPackage(
-                                    branch = newPackage.branch,
-                                    project = newPackage.project,
-                                    commitHash = newPackage.commitHash,
-                                    workPackageStatus = WorkPackageStatus.PENDING,
-                                    epochSeconds = epochSeconds,
-                                    installationId = newPackage.installationId
-                            )
-                            WorkPackageProvider.packages.add(newWorkPackage)
-                        }
-                    }
-                }
+            } catch (t: Throwable) {
+                t.printStackTrace()
             }
             delay(5000)
         }
