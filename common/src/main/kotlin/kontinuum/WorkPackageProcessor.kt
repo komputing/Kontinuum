@@ -30,7 +30,7 @@ val githubInteractor by lazy {
     )
 }
 
-fun processWorkPackages() {
+suspend fun processWorkPackages() {
 
     while (true) {
         val packageToProcess = WorkPackageProvider.packages.firstOrNull { it.workPackageStatus == PENDING }
@@ -44,12 +44,13 @@ fun processWorkPackages() {
                 e.printStackTrace()
             }
 
-        Thread.sleep(1000)
+        delay(1000)
+
     }
 
 }
 
-private fun processWorkPackage(currentWorkPackage: WorkPackage) = GlobalScope.launch {
+private suspend fun processWorkPackage(currentWorkPackage: WorkPackage) {
 
     currentWorkPackage.workPackageStatus = PROCESSING
 

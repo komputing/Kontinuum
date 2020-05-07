@@ -3,7 +3,7 @@ package kontinuum
 import kontinuum.ConfigProvider.config
 import kotlin.system.exitProcess
 
-fun main() {
+suspend fun main() {
 
     if (!configFile.exists()) {
         println("config not found at $configFile")
