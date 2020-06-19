@@ -4,7 +4,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${KOTLIN_VERSION}"
 
     implementation 'com.nimbusds:nimbus-jose-jwt:8.17.1'
-    implementation 'com.squareup.moshi:moshi:1.9.2'
+    implementation 'com.squareup.moshi:moshi:1.9.3'
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
     implementation 'com.squareup.okhttp3:okhttp:4.7.2'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.7.0.202003110725-r'
