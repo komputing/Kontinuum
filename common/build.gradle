@@ -15,7 +15,7 @@ dependencies {
 
     api 'com.github.ligi:ipfs-api-kotlin:0.15'
     api 'com.github.ligi:kontinuum-model:0.4'
-    implementation 'com.github.komputing:kithub:0.14'
+    implementation 'com.github.komputing:kithub:0.15'
 
     implementation 'org.mortbay.jetty.alpn:alpn-boot:8.1.13.v20181017'
     
