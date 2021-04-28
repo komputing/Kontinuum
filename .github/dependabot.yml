@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.nimbusds:nimbus-jose-jwt
+    versions:
+    - 9.4.1
+    - 9.4.2
+    - "9.5"
+    - "9.6"
+    - "9.7"
+  - dependency-name: org.eclipse.jgit:org.eclipse.jgit
+    versions:
+    - 5.10.0.202012080955-r
+  - dependency-name: org.jetbrains.kotlinx:kotlinx-coroutines-core
+    versions:
+    - 1.4.2-native-mt
+  - dependency-name: junit:junit
+    versions:
+    - 4.13.1
+  - dependency-name: com.squareup.moshi:moshi
+    versions:
+    - 1.11.0
+  - dependency-name: com.squareup.moshi:moshi-kotlin
+    versions:
+    - 1.11.0
+  - dependency-name: io.ktor:ktor-server-core
+    versions:
+    - 1.4.1
+  - dependency-name: io.ktor:ktor-server-netty
+    versions:
+    - 1.4.1
