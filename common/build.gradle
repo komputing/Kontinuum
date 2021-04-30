@@ -11,7 +11,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.30'
 
     implementation 'io.ktor:ktor-server-core:1.4.0'
-    implementation 'io.ktor:ktor-server-netty:1.4.0'
+    implementation 'io.ktor:ktor-server-netty:1.5.4'
 
     api 'com.github.ligi:ipfs-api-kotlin:0.15'
     api 'com.github.ligi:kontinuum-model:0.4'
