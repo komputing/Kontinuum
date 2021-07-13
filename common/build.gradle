@@ -3,7 +3,7 @@ apply plugin: "kotlin"
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${KOTLIN_VERSION}"
 
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.0.1'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.11.1'
     implementation 'com.squareup.moshi:moshi:1.10.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.10.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
