@@ -7,8 +7,7 @@ object WorkPackageProvider {
     val packages = mutableListOf<WorkPackage>()
 
     fun getSortedAndCleaned() =
-            packages.sortedBy { it.epochSeconds }
-                    .map{ it.project+"/"+it.branch to it }.toMap().values
+        packages.sortedBy { it.epochSeconds }.associateBy { it.project + "/" + it.branch }.values
                     .sortedByDescending { it.epochSeconds  }
 
 }
