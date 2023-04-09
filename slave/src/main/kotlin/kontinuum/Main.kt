@@ -33,7 +33,7 @@ suspend fun main() {
         while (isActive) {
             try {
                 val okHttpClient = OkHttpClient.Builder().build()
-                val request = Request.Builder().url("http://builder.komputing.org/api")
+                val request = Request.Builder().url("https://builder.komputing.org/api")
                 okHttpClient.newCall(request.build()).execute().body()?.string()?.let { stringResponse ->
 
                     val packages = workPackageProviderAdapter.fromJson(stringResponse)
