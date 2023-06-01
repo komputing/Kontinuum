@@ -10,7 +10,7 @@ dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
     implementation 'org.slf4j:slf4j-simple:2.0.6'
 
-    implementation 'io.ktor:ktor-server-core:1.4.0'
+    implementation 'io.ktor:ktor-server-core:2.3.1'
     implementation 'io.ktor:ktor-server-netty:1.4.0'
 
     api 'com.github.ligi:ipfs-api-kotlin:0.15'
